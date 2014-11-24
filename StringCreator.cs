@@ -19,27 +19,33 @@ public class StringCreator {
 	Dictionary<string, string> symbol_and_rule = new Dictionary<string, string>();
 	string axiom;
 	int interaction;
+	float angle;
 
 	/// default constructor
 	public StringCreator() {
-
+		this.symbol_and_rule.Add("F", "F+F-F-F+F");
+		this.axiom = "-F";
+		this.interaction = 4;
+		this.angle = 90.0f;
 	}
 
-	/// constructor with three parameters
+	/// constructor with two parameters
 	/// <param name="symbol">Used to specify the symbol.</param>
 	/// <param name="rule">Used to specify the rule.</param>
 	public StringCreator(string symbol, string rule) {
 		this.symbol_and_rule.Add(symbol, rule);
 	}
 
-	/// constructor with three parameters
+	/// constructor with four parameters
 	/// <param name="symbol">Used to specify the symbol.</param>
 	/// <param name="rule">Used to specify the rule.</param>
 	/// <param name="axiom">Used to specify the axiom.</param>
-	public StringCreator(string symbol, string rule, string axiom, int interaction) {
+	/// <param name="angle">Used to specify the angle.</param>
+	public StringCreator(string symbol, string rule, string axiom, int interaction, float angle) {
 		this.symbol_and_rule.Add(symbol, rule);
 		this.axiom = axiom;
 		this.interaction = interaction;
+		this.angle = angle;
 	}
 
 	/// destructor

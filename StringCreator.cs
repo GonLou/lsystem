@@ -20,6 +20,8 @@ public class StringCreator {
 	string axiom;
 	int interaction;
 	float angle;
+	string full_string;
+	float unit_size;
 
 	/// default constructor
 	public StringCreator() {
@@ -27,6 +29,8 @@ public class StringCreator {
 		this.axiom = "-F";
 		this.interaction = 4;
 		this.angle = 90.0f;
+		this.full_string = "";
+		this.unit_size = 0.1f;
 	}
 
 	/// constructor with two parameters
@@ -41,20 +45,44 @@ public class StringCreator {
 	/// <param name="rule">Used to specify the rule.</param>
 	/// <param name="axiom">Used to specify the axiom.</param>
 	/// <param name="angle">Used to specify the angle.</param>
-	public StringCreator(string symbol, string rule, string axiom, int interaction, float angle) {
+	public StringCreator(string symbol, string rule, string axiom, int interaction, float angle, float unit_size) {
 		this.symbol_and_rule.Add(symbol, rule);
 		this.axiom = axiom;
 		this.interaction = interaction;
 		this.angle = angle;
+		this.full_string = "";
+		this.unit_size = unit_size;
 	}
 
 	/// destructor
 	~StringCreator() {
 	}
 
+	public void setFullString(string full_string) {
+		this.full_string = full_string;
+	}
+
+	public string getFullString() {
+		return this.full_string;
+	}
+
+	/// <summary>
+	/// To match the symbols with the rules
+	/// </summary>
+	/// <returns>The dic value.</returns>
+	/// <param name="symbol">Symbol.</param>
+	public string getDicValue(string symbol) {
+		string value = "";
+		if(symbol_and_rule.TryGetValue(symbol, out value))
+			return value;
+		else
+			return value;
+	}
+
+	/// <summary>
 	/// constructor with one parameter
-	/// <param name="interaction">The number of interactions for the cycle</param>
-	/// returns the final string
+	/// </summary>
+	/// <returns>Returns the final completed string.</returns>
 	public string Start() {
 		int cycle = 1;
 		string final_string = this.axiom;
@@ -73,6 +101,9 @@ public class StringCreator {
 			swap_string = "";
 			cycle++;			
 		};
+
+		setFullString(final_string);
+		Debug.Log ( final_string);
 
 		return final_string;
 	}

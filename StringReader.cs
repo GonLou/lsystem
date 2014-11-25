@@ -19,6 +19,8 @@ public class StringReader : StringCreator {
 	float angle;
 	float length;
 	List<Vector3> coords = new List<Vector3>();
+	Vector2 min_coords;
+	Vector2 max_coords;
 
 	// Use this for default initialization
 	public StringReader () {
@@ -46,7 +48,7 @@ public class StringReader : StringCreator {
 	public void setLength(float length) {
 		this.length = length;
 	}
-	
+
 	public float getAngle() {
 		return this.angle;
 	}
@@ -59,10 +61,26 @@ public class StringReader : StringCreator {
 		return this.coords.Count;
 	}
 
+	public float getMinCoordsX() {
+		return this.min_coords.x;
+	}
+
+	public float getMinCoordsY() {
+		return this.min_coords.y;
+	}
+
+	public float getMaxCoordsX() {
+		return this.max_coords.x;
+	}
+
+	public float getMaxCoordsY() {
+		return this.max_coords.y;
+	}
+
 	public Vector3 getCoords(int index) {
 		return this.coords[index];
 	}
-
+	
 	public float getLastCoordX() {
 		return this.coords[getCoordsCount()-1].x;
 	}
@@ -103,24 +121,25 @@ public class StringReader : StringCreator {
 	public void Read(string axiom) {
 		float swap_angle_x = 90.0f;
 		float swap_angle_y = 90.0f;
-		// last_coords = new Array();
-		//List<Vector3> coords = new List<Vector3>();
 		List<Vector3> last_coords = new List<Vector3>();
 		int count_brackets = 0;
 
 		for (int str_pos = 0; str_pos < axiom.Length; str_pos++) {
-			if (axiom.Substring(str_pos, 1) == "F" || axiom.Substring(str_pos, 1) == "X") {
-				if (count_brackets == 0) {
+			if (axiom.Substring(str_pos, 1) == "F" || 
+			    axiom.Substring(str_pos, 1) == "X") {
+				if (count_brackets <= 0) {
 					doubleSetCoords(	this.length * Mathf.Cos (AngleToRadians (swap_angle_x)), 
 				   		             	this.length * Mathf.Sin (AngleToRadians (swap_angle_y)));
 				} else {
 					int last_record = last_coords.Count-1;
-					setCoords((last_coords[last_record]).x, 
-					          (last_coords[last_record]).y);
-					last_coords.RemoveAt(last_record);
+					if (last_record >= 0) {
+						setCoords((last_coords[last_record]).x, 
+						          (last_coords[last_record]).y);
+						last_coords.RemoveAt(last_record);
 
-					setCoords(	this.length * Mathf.Cos (AngleToRadians (swap_angle_x)), 
-					            this.length * Mathf.Sin (AngleToRadians (swap_angle_y)));
+						setCoords(	this.length * Mathf.Cos (AngleToRadians (swap_angle_x)), 
+						            this.length * Mathf.Sin (AngleToRadians (swap_angle_y)));
+					}
 				}
 				//  X
 				//  X→F-[[X]+X]+F[+FX]-X
@@ -148,6 +167,18 @@ public class StringReader : StringCreator {
 				swap_angle_x -= this.angle;
 				swap_angle_y -= this.angle;
 			}
+		}
+
+		if (getCoordsCount() > 0) {
+			if (getLastCoordX() > max_coords.x)
+				max_coords.x = getLastCoordX();
+			else if (getLastCoordY() > max_coords.y)
+				max_coords.y = getLastCoordY();
+
+			if (getLastCoordX() < min_coords.x)
+				min_coords.x = getLastCoordX();
+			else if (getLastCoordY() < min_coords.y)
+				min_coords.y = getLastCoordY();
 		}
 	}
 

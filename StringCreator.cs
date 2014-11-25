@@ -20,8 +20,8 @@ public class StringCreator {
 	string axiom;
 	int interaction;
 	float angle;
-	string full_string;
 	float unit_size;
+	string full_string;
 
 	/// default constructor
 	public StringCreator() {
@@ -62,8 +62,24 @@ public class StringCreator {
 		this.full_string = full_string;
 	}
 
+	public void setAngle(float angle) {
+		this.angle = angle;
+	}
+
+	public void setUnitSize(float unit_size) {
+		this.unit_size = unit_size;
+	}
+
 	public string getFullString() {
 		return this.full_string;
+	}
+
+	public float getAngle() {
+		return this.angle;
+	}
+
+	public float getUnitSize() {
+		return this.unit_size;
 	}
 
 	/// <summary>
@@ -94,7 +110,7 @@ public class StringCreator {
 				// try to find symbol in dictionary & apply the rule
 				if(this.symbol_and_rule.TryGetValue(final_string.Substring(str_pos, 1), out temp))
 					swap_string += temp;
-				else // did not find it just add symbol 
+				else // did not find the alphabet, so it just adds a symbol 
 					swap_string += final_string.Substring(str_pos, 1);
 			}
 			final_string = swap_string;
@@ -103,7 +119,7 @@ public class StringCreator {
 		};
 
 		setFullString(final_string);
-		Debug.Log ( final_string);
+		//Debug.Log ( final_string);
 
 		return final_string;
 	}

@@ -169,13 +169,14 @@ public class Lindenmayer : MonoBehaviour
 	public void LoadFile(int example_num) {
 		const int group_line = 13;
 		int group_begin = example_num * group_line;
-		int group_end = group_begin + group_line;
+		int group_end = group_begin + group_line - 2;
 
 		int counter = 0;
 		string line;
 		
 		record_number = example_num;
-		drawEnable = true;
+		drawEnable = false;
+
 		// Read the file and display it line by line.
 		System.IO.StreamReader file = new System.IO.StreamReader(@"StringFile.txt");
 		while((line = file.ReadLine()) != null)
@@ -185,6 +186,8 @@ public class Lindenmayer : MonoBehaviour
 
 			counter++;
 		}
+		//Debug.Log ("group_begin"+group_begin);
+		//Debug.Log ("group_end"+group_end);
 		//myString = new StringCreator(alphabet, rule, axiom, interaction, angle, unit_size);
 		file.Close();
 	}

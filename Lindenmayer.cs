@@ -62,26 +62,25 @@ public class Lindenmayer : MonoBehaviour
 
 			if ( Input.GetKey(KeyCode.Z) ) {							// zoom in
 				if (Camera.main.orthographicSize > 1)
-					Camera.main.orthographicSize--;
+					Camera.main.orthographicSize -= 0.1f;
 			}
 
 			if ( Input.GetKey(KeyCode.X) ) {							// zoom out
 				if (Camera.main.orthographicSize < 10)
-					Camera.main.orthographicSize++;
+					Camera.main.orthographicSize += 0.1f;
 			}
-
 
 			UpdateCamera(camera_position.x,camera_position.y);
 		}
 
-		if ( Input.GetKeyDown(KeyCode.Keypad1) ) LoadFile(0);
-		if ( Input.GetKeyDown(KeyCode.Keypad2) ) LoadFile(1);
-		if ( Input.GetKeyDown(KeyCode.Keypad3) ) LoadFile(2);
-		if ( Input.GetKeyDown(KeyCode.Keypad4) ) LoadFile(3);
-		if ( Input.GetKeyDown(KeyCode.Keypad5) ) LoadFile(4);
-		if ( Input.GetKeyDown(KeyCode.Keypad6) ) LoadFile(5);
-		if ( Input.GetKeyDown(KeyCode.Keypad7) ) LoadFile(6);
-		if ( Input.GetKeyDown(KeyCode.Keypad8) ) LoadFile(7);
+		if ( Input.GetKeyDown(KeyCode.Keypad1) || Input.GetKeyDown(KeyCode.Alpha1) ) LoadFile(0);
+		if ( Input.GetKeyDown(KeyCode.Keypad2) || Input.GetKeyDown(KeyCode.Alpha2) ) LoadFile(1);
+		if ( Input.GetKeyDown(KeyCode.Keypad3) || Input.GetKeyDown(KeyCode.Alpha3) ) LoadFile(2);
+		if ( Input.GetKeyDown(KeyCode.Keypad4) || Input.GetKeyDown(KeyCode.Alpha4) ) LoadFile(3);
+		if ( Input.GetKeyDown(KeyCode.Keypad5) || Input.GetKeyDown(KeyCode.Alpha5) ) LoadFile(4);
+		if ( Input.GetKeyDown(KeyCode.Keypad6) || Input.GetKeyDown(KeyCode.Alpha6) ) LoadFile(5);
+		if ( Input.GetKeyDown(KeyCode.Keypad7) || Input.GetKeyDown(KeyCode.Alpha7) ) LoadFile(6);
+		if ( Input.GetKeyDown(KeyCode.Keypad8) || Input.GetKeyDown(KeyCode.Alpha8) ) LoadFile(7);
 
 	}
 
@@ -103,8 +102,6 @@ public class Lindenmayer : MonoBehaviour
 	/// </summary>
 	public void CreateFullAxiom() {
 		myString = new StringCreator(alphabet, rule, axiom, interaction, angle, unit_size);
-		//myStringRead = new StringReader(angle, unit_size);
-		//myStringRead.Read(myString.Start());
 	}
 
 
@@ -117,6 +114,7 @@ public class Lindenmayer : MonoBehaviour
 //		UpdateCamera(myStringRead.getMaxCoordsX()-myStringRead.getMinCoordsX(),
 //		             myStringRead.getMaxCoordsY()-myStringRead.getMinCoordsY());
 		UpdateCamera(myStringRead.getMinCoordsX(),myStringRead.getMinCoordsY());
+		//myStringRead.printCoords();
 	}
 	
 	
@@ -170,26 +168,85 @@ public class Lindenmayer : MonoBehaviour
 		const int group_line = 13;
 		int group_begin = example_num * group_line;
 		int group_end = group_begin + group_line - 2;
+		int internal_counter = 0;
 
 		int counter = 0;
 		string line;
-		
+
+		string[] alphabet_func = new string[10];
+		string[] rule_func = new string[10];
+
 		record_number = example_num;
 		drawEnable = false;
 
 		// Read the file and display it line by line.
 		System.IO.StreamReader file = new System.IO.StreamReader(@"StringFile.txt");
-		while((line = file.ReadLine()) != null)
+		while((line = file.ReadLine()) != null && counter != 32000)
 		{
-			if (counter >= group_begin && counter <= group_end)
-				Debug.Log (line);
+			if (counter >= group_begin && counter <= group_end) {
+
+				// Debug.Log (line);
+				// Debug.Log(internal_counter);
+
+				switch(internal_counter) {
+				case 1: // symbol
+					line = line.Replace(" ", "");
+					line = line.Replace(",", "");
+					for (int str_pos=0; str_pos < line.Length; str_pos++) {
+						alphabet_func[str_pos] = line.Substring(str_pos, 1);
+					}
+ 					break;
+				case 3: // rule
+					int count_rules = 0;
+					line = line.Replace(" ", "");
+					line = line.Replace("->", "");
+					for (int str_pos=1; str_pos < line.Length; str_pos++) {
+						if (line.Substring(str_pos, 1) == ";") {
+							str_pos++;
+							count_rules++;
+						} else {
+							rule_func[count_rules] = rule_func[count_rules] + line.Substring(str_pos, 1);
+						}
+					}
+					break;
+				case 5: // axiom
+					axiom = line;
+					break;
+				case 7: // interaction
+					if (line != null) int.TryParse(line, out interaction);
+					//Debug.Log ("interaction", interaction);
+					break;
+				case 9: // angle
+					if (line != null) float.TryParse(line, out angle);
+					//Debug.Log ("angle", angle);
+					break;
+				case 11: // unit size
+					if (line != null) float.TryParse(line, out unit_size);
+					//Debug.Log ("unit_size", unit_size);
+					counter = 31999;
+					break;
+				}
+				internal_counter++;
+
+			}
+			//Debug.Log(counter);
 
 			counter++;
 		}
-		//Debug.Log ("group_begin"+group_begin);
-		//Debug.Log ("group_end"+group_end);
-		//myString = new StringCreator(alphabet, rule, axiom, interaction, angle, unit_size);
+
+		alphabet = alphabet_func[0];
+		rule = rule_func[0];
+		// Debug.Log("alphabet, rule, axiom, interaction, angle, unit_size"+alphabet+ rule+ axiom+ interaction+ angle+ unit_size);
+		myString = new StringCreator(alphabet, rule, axiom, interaction, angle, unit_size);
+		for (int attr = 1; attr < 10; attr++)
+		{
+			if (alphabet_func[attr] != null) myString.setStringCreator(alphabet_func[attr], rule_func[attr]);
+		}
 		file.Close();
+
+		CreateFullAxiom();
+		Axiom2Vectors();
+		drawEnable = true;
 	}
 
 

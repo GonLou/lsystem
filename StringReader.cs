@@ -41,6 +41,10 @@ public class StringReader : StringCreator {
 		this.coords.Add(new Vector3(x, y, 0));
 	}
 
+	public void setCoordsAdd(float x, float y) {
+		this.coords.Add(new Vector3(this.coords[this.coords.Count-1].x + x, this.coords[this.coords.Count-1].y + y, 0));
+	}
+
 	public void setAngle(float angle) {
 		this.angle = angle;
 	}
@@ -119,53 +123,73 @@ public class StringReader : StringCreator {
 	/// </summary>
 	/// <param name="axiom">Receives the full axiom</param>
 	public void Read(string axiom) {
-		float swap_angle_x = 90.0f;
-		float swap_angle_y = 90.0f;
+		float swap_angle = 90.0f;
 		List<Vector3> last_coords = new List<Vector3>();
+		List<float> last_angle = new List<float>();
+		List<float> last_length = new List<float>();
+		int status = 0; // 0 - is no brackets | 1 - opened a bracket | 2 - closed a bracket
 		int count_brackets = 0;
 
 		for (int str_pos = 0; str_pos < axiom.Length; str_pos++) {
 			if (axiom.Substring(str_pos, 1) == "F" || 
 			    axiom.Substring(str_pos, 1) == "X") {
-				if (count_brackets <= 0) {
-					doubleSetCoords(	this.length * Mathf.Cos (AngleToRadians (swap_angle_x)), 
-				   		             	this.length * Mathf.Sin (AngleToRadians (swap_angle_y)));
-				} else {
-					int last_record = last_coords.Count-1;
-					if (last_record >= 0) {
-						setCoords((last_coords[last_record]).x, 
-						          (last_coords[last_record]).y);
+				switch (status) {
+					case 0:
+						doubleSetCoords(	this.length * Mathf.Cos (AngleToRadians (swap_angle)), 
+					   		             	this.length * Mathf.Sin (AngleToRadians (swap_angle)));
+						break;
+					case 1:
+						setCoords( (last_coords[count_brackets-1]).x, 
+						           (last_coords[count_brackets-1]).y );
+						setCoordsAdd(	this.length * Mathf.Cos (AngleToRadians (swap_angle)), 
+						            	this.length * Mathf.Sin (AngleToRadians (swap_angle)) );
+						status = 0;
+						break;
+					case 2:
+						int last_record;
+						
+						last_record = last_length.Count-1;
+						setLength( last_length[last_record] );
+						last_length.RemoveAt( last_record );
+
+						setCoords( (last_coords[count_brackets]).x, 
+						           (last_coords[count_brackets]).y );
+						setCoordsAdd(	this.length * Mathf.Cos (AngleToRadians (swap_angle-this.angle)), 
+					             		this.length * Mathf.Sin (AngleToRadians (swap_angle-this.angle)) );
+
+						last_record = last_coords.Count-1;
 						last_coords.RemoveAt(last_record);
 
-						setCoords(	this.length * Mathf.Cos (AngleToRadians (swap_angle_x)), 
-						            this.length * Mathf.Sin (AngleToRadians (swap_angle_y)));
-					}
+						last_record = last_angle.Count-1;
+						last_angle.RemoveAt(last_record);
+
+						status = 0;
+						break;
 				}
 				//  X
 				//  X→F-[[X]+X]+F[+FX]-X
 				//	F→FF
-				// this.coords.Add(new Vector3(this.coords[this.coords.Count-1].x + x, 
-				//                             this.coords[this.coords.Count-1].y + y, 
 			} else if (axiom.Substring(str_pos, 1) == "[") {
+
 				if (getCoordsCount() > 0) 
-					last_coords.Add( new Vector3(this.length * Mathf.Cos (AngleToRadians (swap_angle_x)) + getLastCoordX(),
-					                             this.length * Mathf.Sin (AngleToRadians (swap_angle_y)) + getLastCoordY(),
+					last_coords.Add( new Vector3(getLastCoordX(),
+					                             getLastCoordY(),
 					                             0));
 				else
 					last_coords.Add ( new Vector3(0,0,0));
+
+				last_angle.Add (swap_angle);
+				last_length.Add (this.length);
+				setLength( this.length*0.5f );
+				status = 1;
 				count_brackets ++;
 			} else if (axiom.Substring(str_pos, 1) == "]") {
-				// vai busvar o ultimo
-				// faz singlerecords
-				// elimina-o da lista
-				// mete rectos a true para quando processa n ser o doublesetRecords mas o single
+				status = 2;
 				count_brackets --;
 			} else if (axiom.Substring(str_pos, 1) == "+") {
-				swap_angle_x += this.angle;
-				swap_angle_y += this.angle;
+				swap_angle += this.angle;
 			} else if (axiom.Substring(str_pos, 1) == "-") {
-				swap_angle_x -= this.angle;
-				swap_angle_y -= this.angle;
+				swap_angle -= this.angle;
 			}
 		}
 

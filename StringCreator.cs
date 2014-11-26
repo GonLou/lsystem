@@ -32,14 +32,7 @@ public class StringCreator {
 		this.full_string = "";
 		this.unit_size = 0.1f;
 	}
-
-	/// constructor with two parameters
-	/// <param name="symbol">Used to specify the symbol.</param>
-	/// <param name="rule">Used to specify the rule.</param>
-	public StringCreator(string symbol, string rule) {
-		this.symbol_and_rule.Add(symbol, rule);
-	}
-
+	
 	/// constructor with four parameters
 	/// <param name="symbol">Used to specify the symbol.</param>
 	/// <param name="rule">Used to specify the rule.</param>
@@ -56,6 +49,13 @@ public class StringCreator {
 
 	/// destructor
 	~StringCreator() {
+	}
+
+	/// constructor with two parameters
+	/// <param name="symbol">Used to specify the symbol.</param>
+	/// <param name="rule">Used to specify the rule.</param>
+	public void setStringCreator(string symbol, string rule) {
+		this.symbol_and_rule.Add(symbol, rule);
 	}
 
 	public void setFullString(string full_string) {
@@ -119,7 +119,7 @@ public class StringCreator {
 		};
 
 		setFullString(final_string);
-		//Debug.Log ( final_string);
+		Debug.Log ( final_string);
 
 		return final_string;
 	}

@@ -1,4 +1,16 @@
-﻿using UnityEngine;
+﻿///////////////////////////////////////////////////////////////////
+/// 
+/// author:
+/// Goncalo Lourenco
+/// 
+/// 
+/// <summary>
+/// Main Class for L-Systems
+/// </summary>
+/// 
+///////////////////////////////////////////////////////////////////
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -39,6 +51,15 @@ public class Lindenmayer : MonoBehaviour
 		angle = 90.0f;
 		unit_size = 0.1f;
 		toggleSaveFile = false;
+
+		interaction = 1;
+		alphabet = "F";
+		rule = "F[+F][-F[-F]F]F[+F][-F]";
+		axiom = "F";
+		angle = 30.0f;
+		unit_size = 1f;
+		toggleSaveFile = false;
+
 
 		camera_position = Camera.main.transform.position;
 	}
@@ -111,8 +132,6 @@ public class Lindenmayer : MonoBehaviour
 	public void Axiom2Vectors() {
 		myStringRead = new StringReader(angle, unit_size);
 		myStringRead.Read(myString.Start());
-//		UpdateCamera(myStringRead.getMaxCoordsX()-myStringRead.getMinCoordsX(),
-//		             myStringRead.getMaxCoordsY()-myStringRead.getMinCoordsY());
 		UpdateCamera(myStringRead.getMinCoordsX(),myStringRead.getMinCoordsY());
 		//myStringRead.printCoords();
 	}
@@ -173,9 +192,6 @@ public class Lindenmayer : MonoBehaviour
 		int counter = 0;
 		string line;
 
-		string[] alphabet_func = new string[10];
-		string[] rule_func = new string[10];
-
 		record_number = example_num;
 		drawEnable = false;
 
@@ -185,63 +201,35 @@ public class Lindenmayer : MonoBehaviour
 		{
 			if (counter >= group_begin && counter <= group_end) {
 
-				// Debug.Log (line);
-				// Debug.Log(internal_counter);
-
 				switch(internal_counter) {
 				case 1: // symbol
-					line = line.Replace(" ", "");
-					line = line.Replace(",", "");
-					for (int str_pos=0; str_pos < line.Length; str_pos++) {
-						alphabet_func[str_pos] = line.Substring(str_pos, 1);
-					}
+					alphabet = line;
  					break;
 				case 3: // rule
-					int count_rules = 0;
-					line = line.Replace(" ", "");
-					line = line.Replace("->", "");
-					for (int str_pos=1; str_pos < line.Length; str_pos++) {
-						if (line.Substring(str_pos, 1) == ";") {
-							str_pos++;
-							count_rules++;
-						} else {
-							rule_func[count_rules] = rule_func[count_rules] + line.Substring(str_pos, 1);
-						}
-					}
+					rule = line;
 					break;
 				case 5: // axiom
 					axiom = line;
 					break;
 				case 7: // interaction
 					if (line != null) int.TryParse(line, out interaction);
-					//Debug.Log ("interaction", interaction);
 					break;
 				case 9: // angle
 					if (line != null) float.TryParse(line, out angle);
-					//Debug.Log ("angle", angle);
 					break;
 				case 11: // unit size
 					if (line != null) float.TryParse(line, out unit_size);
-					//Debug.Log ("unit_size", unit_size);
 					counter = 31999;
 					break;
 				}
 				internal_counter++;
 
 			}
-			//Debug.Log(counter);
 
 			counter++;
 		}
 
-		alphabet = alphabet_func[0];
-		rule = rule_func[0];
-		// Debug.Log("alphabet, rule, axiom, interaction, angle, unit_size"+alphabet+ rule+ axiom+ interaction+ angle+ unit_size);
 		myString = new StringCreator(alphabet, rule, axiom, interaction, angle, unit_size);
-		for (int attr = 1; attr < 10; attr++)
-		{
-			if (alphabet_func[attr] != null) myString.setStringCreator(alphabet_func[attr], rule_func[attr]);
-		}
 		file.Close();
 
 		CreateFullAxiom();

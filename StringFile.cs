@@ -1,4 +1,16 @@
-﻿using UnityEngine;
+﻿///////////////////////////////////////////////////////////////////
+/// 
+/// author:
+/// Goncalo Lourenco
+/// 
+/// 
+/// <summary>
+/// File I/O operations for L-Systems
+/// </summary>
+/// 
+///////////////////////////////////////////////////////////////////
+ 
+using UnityEngine;
 using System.Collections;
 
 public class StringFile {

@@ -39,7 +39,34 @@ public class StringCreator {
 	/// <param name="axiom">Used to specify the axiom.</param>
 	/// <param name="angle">Used to specify the angle.</param>
 	public StringCreator(string symbol, string rule, string axiom, int interaction, float angle, float unit_size) {
-		this.symbol_and_rule.Add(symbol, rule);
+		string[] alphabet_func = new string[10];
+		string[] rule_func = new string[10];
+
+		// separates the symbols
+		symbol = symbol.Replace(" ", "");
+		symbol = symbol.Replace(",", "");
+		for (int str_pos=0; str_pos < symbol.Length; str_pos++) {
+			alphabet_func[str_pos] = symbol.Substring(str_pos, 1);
+		}
+
+		// separates the rules
+		int count_rules = 0;
+		rule = rule.Replace(" ", "");
+		rule = rule.Replace("->", "");
+		for (int str_pos=1; str_pos < rule.Length; str_pos++) {
+			if (rule.Substring(str_pos, 1) == ";") {
+				str_pos++;
+				count_rules++;
+			} else {
+				rule_func[count_rules] = rule_func[count_rules] + rule.Substring(str_pos, 1);
+			}
+		}
+
+		// adds keys and rules to the dictionary
+		for (int attr = 0; attr < 10; attr++) 
+			if (alphabet_func[attr] != null) 
+				this.symbol_and_rule.Add(alphabet_func[attr], rule_func[attr]);
+
 		this.axiom = axiom;
 		this.interaction = interaction;
 		this.angle = angle;
@@ -49,13 +76,6 @@ public class StringCreator {
 
 	/// destructor
 	~StringCreator() {
-	}
-
-	/// constructor with two parameters
-	/// <param name="symbol">Used to specify the symbol.</param>
-	/// <param name="rule">Used to specify the rule.</param>
-	public void setStringCreator(string symbol, string rule) {
-		this.symbol_and_rule.Add(symbol, rule);
 	}
 
 	public void setFullString(string full_string) {
@@ -105,21 +125,17 @@ public class StringCreator {
 		string swap_string = "";
 
 		while(cycle <= this.interaction) {
-			for (int str_pos=0; str_pos < final_string.Length; str_pos++){
-				string temp = "";
-				// try to find symbol in dictionary & apply the rule
-				if(this.symbol_and_rule.TryGetValue(final_string.Substring(str_pos, 1), out temp))
-					swap_string += temp;
-				else // did not find the alphabet, so it just adds a symbol 
-					swap_string += final_string.Substring(str_pos, 1);
-			}
-			final_string = swap_string;
-			swap_string = "";
+			string temp = "";
+
+			foreach(KeyValuePair<string, string> entry in this.symbol_and_rule)
+				if(this.symbol_and_rule.TryGetValue(entry.Key, out temp))
+					final_string = final_string.Replace(entry.Key, temp);
+
 			cycle++;			
 		};
 
 		setFullString(final_string);
-		Debug.Log ( final_string);
+		//Debug.Log ( final_string);
 
 		return final_string;
 	}

@@ -5,7 +5,7 @@
 /// 
 /// 
 /// <summary>
-/// Full axiom tranformed into vectors
+/// Full axiom transformation into vectors
 /// </summary>
 /// 
 ///////////////////////////////////////////////////////////////////
@@ -105,12 +105,8 @@ public class StringReader : StringCreator {
 	/// </summary>
 	/// <param name="x">Receives x position</param>
 	/// <param name="y">Receives y position</param>
-	public void doubleSetCoords(float x, float y) {
-		if (this.coords.Count > 0) {
-			this.coords.Add(this.coords[this.coords.Count-1]);
-		} else {
-			this.coords.Add(new Vector3(0.0f, 0.0f, 0.0f));
-		}
+	private void doubleSetCoords(float x, float y) {
+		this.coords.Add(this.coords[this.coords.Count-1]);
 		this.coords.Add(new Vector3(this.coords[this.coords.Count-1].x + x, this.coords[this.coords.Count-1].y + y, 0.0f)); 
 	}
 	
@@ -126,9 +122,12 @@ public class StringReader : StringCreator {
 		float swap_angle = 90.0f;
 		List<Vector3> last_coords = new List<Vector3>();
 		List<float> last_angle = new List<float>();
-		List<float> last_length = new List<float>();
 		int status = 0; // 0 - is no brackets | 1 - opened a bracket | 2 - closed a bracket
 		int count_brackets = 0;
+
+		setCoords( 0, 0 );
+		setCoordsAdd( 0, 0 );
+		last_coords.Add( new Vector3(0, 0, 0) );
 
 		for (int str_pos = 0; str_pos < axiom.Length; str_pos++) {
 			if (axiom.Substring(str_pos, 1) == "F" || 
@@ -136,9 +135,16 @@ public class StringReader : StringCreator {
 				switch (status) {
 					case 0:
 						doubleSetCoords(	this.length * Mathf.Cos (AngleToRadians (swap_angle)), 
-					   		             	this.length * Mathf.Sin (AngleToRadians (swap_angle)));
+					   		             	this.length * Mathf.Sin (AngleToRadians (swap_angle)) );
+						if ( count_brackets == 0 ) last_coords.Insert( 	0, new Vector3(	getLastCoordX(),
+					    	                         					getLastCoordY(),
+				        	                     						0) );
 						break;
 					case 1:
+						if ( count_brackets > 1 ) last_coords.Insert( 	count_brackets-1,  
+					                                             		new Vector3(getLastCoordX(),
+								                	        			getLastCoordY(),
+						        		                    			0) );
 						setCoords( (last_coords[count_brackets-1]).x, 
 						           (last_coords[count_brackets-1]).y );
 						setCoordsAdd(	this.length * Mathf.Cos (AngleToRadians (swap_angle)), 
@@ -146,46 +152,30 @@ public class StringReader : StringCreator {
 						status = 0;
 						break;
 					case 2:
-						int last_record;
-						
-						last_record = last_length.Count-1;
-						setLength( last_length[last_record] );
-						last_length.RemoveAt( last_record );
-
 						setCoords( (last_coords[count_brackets]).x, 
 						           (last_coords[count_brackets]).y );
-						setCoordsAdd(	this.length * Mathf.Cos (AngleToRadians (swap_angle-this.angle)), 
-					             		this.length * Mathf.Sin (AngleToRadians (swap_angle-this.angle)) );
+						setCoordsAdd(	this.length * Mathf.Cos (AngleToRadians (swap_angle)), 
+					    	         	this.length * Mathf.Sin (AngleToRadians (swap_angle)) );
 
-						last_record = last_coords.Count-1;
-						last_coords.RemoveAt(last_record);
-
-						last_record = last_angle.Count-1;
-						last_angle.RemoveAt(last_record);
+						if (count_brackets > 0) last_coords.RemoveAt(count_brackets);
+						if ( count_brackets == 0 ) last_coords.Insert( 	0, new Vector3(	getLastCoordX(),
+					                                                               		getLastCoordY(),
+					                                                               		0) );
 
 						status = 0;
 						break;
 				}
-				//  X
-				//  X→F-[[X]+X]+F[+FX]-X
-				//	F→FF
 			} else if (axiom.Substring(str_pos, 1) == "[") {
-
-				if (getCoordsCount() > 0) 
-					last_coords.Add( new Vector3(getLastCoordX(),
-					                             getLastCoordY(),
-					                             0));
-				else
-					last_coords.Add ( new Vector3(0,0,0));
-
 				last_angle.Add (swap_angle);
-				last_length.Add (this.length);
-				setLength( this.length*0.5f );
+
 				status = 1;
 				count_brackets ++;
 			} else if (axiom.Substring(str_pos, 1) == "]") {
 				status = 2;
 				count_brackets --;
+
+				swap_angle = last_angle[count_brackets];
+				last_angle.RemoveAt(count_brackets);
 			} else if (axiom.Substring(str_pos, 1) == "+") {
 				swap_angle += this.angle;
 			} else if (axiom.Substring(str_pos, 1) == "-") {
@@ -193,17 +183,17 @@ public class StringReader : StringCreator {
 			}
 		}
 
-		if (getCoordsCount() > 0) {
-			if (getLastCoordX() > max_coords.x)
-				max_coords.x = getLastCoordX();
-			else if (getLastCoordY() > max_coords.y)
-				max_coords.y = getLastCoordY();
+		/*
+		if (getLastCoordX() > max_coords.x)
+			max_coords.x = getLastCoordX();
+		else if (getLastCoordY() > max_coords.y)
+			max_coords.y = getLastCoordY();
 
-			if (getLastCoordX() < min_coords.x)
-				min_coords.x = getLastCoordX();
-			else if (getLastCoordY() < min_coords.y)
-				min_coords.y = getLastCoordY();
-		}
+		if (getLastCoordX() < min_coords.x)
+			min_coords.x = getLastCoordX();
+		else if (getLastCoordY() < min_coords.y)
+			min_coords.y = getLastCoordY();
+		*/
 	}
 
 	/// <summary>

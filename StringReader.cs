@@ -37,11 +37,11 @@ public class StringReader : StringCreator {
 	~StringReader() {
 	}
 
-	public void setCoords(float x, float y) {
+	private void setCoords(float x, float y) {
 		this.coords.Add(new Vector3(x, y, 0));
 	}
 
-	public void setCoordsAdd(float x, float y) {
+	private void setCoordsAdd(float x, float y) {
 		this.coords.Add(new Vector3(this.coords[this.coords.Count-1].x + x, this.coords[this.coords.Count-1].y + y, 0));
 	}
 

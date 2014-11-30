@@ -18,28 +18,17 @@ public class StringFile {
 	private int group_line = 13;
 
 	// Use this for initialization
-	//string symbol, string rule, string axiom, int interaction
 	public StringFile () {
 	}
 
 	/// destructor
 	~StringFile() {
 	}
-
-//	public int getSmallerRecord(int record) {
-//		if (record < 0)
-//			return 0;
-//		else
-//			return record;
-//	}
-//
-//	public int getBiggerRecord(int record) {
-//		if (record * group_line > getTotalRecords())
-//			return getTotalRecords();
-//		else
-//			return record;
-//	}
-
+	
+	/// <summary>
+	/// To get the total number of records
+	/// </summary>
+	/// <returns>The total records.</returns>
 	public int getTotalRecords() {
 		int counter = 0;
 		string line;
@@ -53,7 +42,15 @@ public class StringFile {
 		return (int)(counter/group_line);
 	}
 
-	/// method that write into a file
+	/// <summary>
+	/// Write into the file
+	/// </summary>
+	/// <param name="symbol">Symbol.</param>
+	/// <param name="rule">Rule.</param>
+	/// <param name="axiom">Axiom.</param>
+	/// <param name="interaction">Interaction.</param>
+	/// <param name="angle">Angle.</param>
+	/// <param name="unit_size">Unit_size.</param>
 	public void write(string symbol, string rule, string axiom, int interaction, float angle, float unit_size) {
 		if (!System.IO.File.Exists(@"StringFile.txt")) {  // if files does not exist create one
 			string[] allLines = { 	"symbol:", symbol, 

@@ -116,7 +116,7 @@ public class StringCreator {
 	}
 
 	/// <summary>
-	/// constructor with one parameter
+	/// Create the string
 	/// </summary>
 	/// <returns>Returns the final completed string.</returns>
 	public string Start() {

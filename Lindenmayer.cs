@@ -11,6 +11,7 @@
 ///////////////////////////////////////////////////////////////////
 
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -39,6 +40,13 @@ public class Lindenmayer : MonoBehaviour
 
 	public Vector3 camera_position;
 
+	public Text inter_number;
+	public Text record_number_text;
+	public Slider inter_slider;
+	public Slider record_slider;
+	public InputField rule_input;
+
+
 	// Unity default start
 	void Start ()
 	{
@@ -48,26 +56,82 @@ public class Lindenmayer : MonoBehaviour
 		alphabet = "F";
 		rule = "F+F-F-F+F";
 		axiom = "-F";
-		angle = 90.0f;
+		angle = 45.0f;
 		unit_size = 0.1f;
 		toggleSaveFile = false;
 
-		interaction = 1;
-		alphabet = "F";
-		rule = "F[+F][-F[-F]F]F[+F][-F]";
-		axiom = "F";
-		angle = 30.0f;
-		unit_size = 1f;
-		toggleSaveFile = false;
-
-
 		camera_position = Camera.main.transform.position;
+
+		GameObject temp;
+		temp = GameObject.Find("Slider Interactions");
+		if (temp != null) {
+			// Get the Slider Component
+			inter_slider = temp.GetComponent<Slider>();
+			
+			inter_slider.value = interaction;
+			inter_slider.minValue = 1;
+			inter_slider.maxValue = 10;
+		}
+
+		temp = GameObject.Find("Slider Record");
+		if (temp != null) {
+			// Get the Slider Component
+			record_slider = temp.GetComponent<Slider>();
+			
+			record_slider.value = 0;
+			record_slider.minValue = 1;
+			record_slider.maxValue = (int) TotalRecords();
+		}
+
+		temp = GameObject.Find("InputField Rule");
+		if (temp != null) { 
+			rule_input = temp.GetComponent<InputField>();
+			rule_input.text = rule;
+		}
+
 	}
 
 
 	// Unity default update
 	void Update ()
 	{
+		GameObject temp;
+		temp = GameObject.Find("Slider Interactions");
+		if (temp != null) {
+			// Get the Slider Component
+			inter_slider = temp.GetComponent<Slider>();
+			if ( inter_slider.value != interaction ) {
+				interaction = (int) inter_slider.value;
+				CreateFullAxiom();
+				Axiom2Vectors();
+				drawEnable = true;
+			}
+		}
+		
+		temp = GameObject.Find("Slider Record");
+		if (temp != null) {
+			// Get the Slider Component
+			record_slider = temp.GetComponent<Slider>();
+			if ( (int) record_slider.value != (record_number+1) ) {
+				record_number = (int) record_slider.value;
+				LoadFile(record_number);
+			}
+			Debug.Log((int) record_slider.value);
+		}
+
+		temp = GameObject.Find("InputField Rule");
+		if (temp != null) { 
+			rule_input = temp.GetComponent<InputField>();
+			if (rule_input.text != rule) {
+				rule = rule_input.text;
+				CreateFullAxiom();
+				Axiom2Vectors();
+				drawEnable = true;
+				UpdateCamera((myStringRead.getMinCoordsX()/2), 
+				             (myStringRead.getMaxCoordsY()/2) );
+			}
+		}
+
 		if (drawEnable) {
 			if ( Input.GetKey(KeyCode.UpArrow) )				// camera move up
 				camera_position.y += 0.1f;
@@ -89,6 +153,18 @@ public class Lindenmayer : MonoBehaviour
 			if ( Input.GetKey(KeyCode.X) ) {							// zoom out
 				if (Camera.main.orthographicSize < 10)
 					Camera.main.orthographicSize += 0.1f;
+			}
+
+			if ( Input.GetKey(KeyCode.R) ) {			// +
+				BiggerRecord();
+				LoadFile(record_number);
+				DisableRendererWithDelay();
+			}
+			
+			if ( Input.GetKey(KeyCode.T) ) {		// -
+				SmallerRecord();
+				LoadFile(record_number);
+				DisableRendererWithDelay();
 			}
 
 			UpdateCamera(camera_position.x,camera_position.y);
@@ -123,6 +199,27 @@ public class Lindenmayer : MonoBehaviour
 	/// </summary>
 	public void CreateFullAxiom() {
 		myString = new StringCreator(alphabet, rule, axiom, interaction, angle, unit_size);
+
+		GameObject temp;
+		temp = GameObject.Find("Text Interactions");
+		if (temp != null) {
+			inter_number = temp.GetComponent<Text>();
+			inter_number.text = interaction.ToString() + " interactions";
+		}
+		
+		temp = GameObject.Find("Slider Interactions");
+		if (temp != null) {
+			// Get the Slider Component
+			inter_slider = temp.GetComponent<Slider>();
+			
+			inter_slider.value = interaction;
+		}
+		
+		temp = GameObject.Find("InputField Rule");
+		if (temp != null) { 
+			rule_input = temp.GetComponent<InputField>();
+			rule_input.text = rule;
+		}
 	}
 
 
@@ -135,8 +232,8 @@ public class Lindenmayer : MonoBehaviour
 		UpdateCamera(myStringRead.getMinCoordsX(),myStringRead.getMinCoordsY());
 		//myStringRead.printCoords();
 	}
-	
-	
+
+
 	/// <summary>
 	/// save into file
 	/// </summary>
@@ -168,11 +265,22 @@ public class Lindenmayer : MonoBehaviour
 		IOFile.write(tmp_alphabet, tmp_rule, axiom, interaction, angle, unit_size);
 	}
 
+
+	/// <summary>
+	/// Verifies if the minimum record was reached
+	/// </summary>
+	/// <returns>The record.</returns>
 	public int SmallerRecord() {
 		record_number--;
 		if (record_number < 0) record_number = 0;
 		return record_number;
 	}
+
+
+	/// <summary>
+	/// Verifies if the maximum record was reached
+	/// </summary>
+	/// <returns>The record.</returns>
 	public int BiggerRecord() {
 		StringFile IOFile = new StringFile();
 		record_number++;
@@ -180,10 +288,25 @@ public class Lindenmayer : MonoBehaviour
 		return record_number;
 	}
 
+
 	/// <summary>
 	/// load from file
 	/// </summary>
+	/// <param name="example_num">Example_num.</param>
 	public void LoadFile(int example_num) {
+		example_num++;
+		GameObject temp = GameObject.Find("Text Number of Record");
+		if (temp != null) {
+			record_number_text = temp.GetComponent<Text>();
+			record_number_text.text = example_num.ToString();
+		}	
+		temp = GameObject.Find("Slider Record");
+		if (temp != null) {
+			record_slider = temp.GetComponent<Slider>();
+			record_slider.value = example_num;
+		}
+		example_num--;
+
 		const int group_line = 13;
 		int group_begin = example_num * group_line;
 		int group_end = group_begin + group_line - 2;
@@ -295,6 +418,16 @@ public class Lindenmayer : MonoBehaviour
 							mat.hideFlags = HideFlags.HideAndDontSave;
 							mat.shader.hideFlags = HideFlags.HideAndDontSave;
 	                    }
+	}
+
+
+	/// <summary>
+	/// Returns the total number of records
+	/// </summary>
+	/// <returns>The total records number.</returns>
+	public int TotalRecords() {
+		StringFile IOFile = new StringFile();
+		return IOFile.getTotalRecords();
 	}
 	
 }

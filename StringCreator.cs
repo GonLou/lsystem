@@ -135,7 +135,7 @@ public class StringCreator {
 		};
 
 		setFullString(final_string);
-		//Debug.Log ( final_string);
+		Debug.Log ( final_string);
 
 		return final_string;
 	}

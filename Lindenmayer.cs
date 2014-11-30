@@ -235,6 +235,8 @@ public class Lindenmayer : MonoBehaviour
 		CreateFullAxiom();
 		Axiom2Vectors();
 		drawEnable = true;
+		UpdateCamera((myStringRead.getMinCoordsX()/2), 
+		             (myStringRead.getMaxCoordsY()/2) );
 	}
 
 

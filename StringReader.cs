@@ -141,10 +141,6 @@ public class StringReader : StringCreator {
 				        	                     						0) );
 						break;
 					case 1:
-						if ( count_brackets > 1 ) last_coords.Insert( 	count_brackets-1,  
-					                                             		new Vector3(getLastCoordX(),
-								                	        			getLastCoordY(),
-						        		                    			0) );
 						setCoords( (last_coords[count_brackets-1]).x, 
 						           (last_coords[count_brackets-1]).y );
 						setCoordsAdd(	this.length * Mathf.Cos (AngleToRadians (swap_angle)), 
@@ -152,8 +148,6 @@ public class StringReader : StringCreator {
 						status = 0;
 						break;
 					case 2:
-						setCoords( (last_coords[count_brackets]).x, 
-						           (last_coords[count_brackets]).y );
 						setCoordsAdd(	this.length * Mathf.Cos (AngleToRadians (swap_angle)), 
 					    	         	this.length * Mathf.Sin (AngleToRadians (swap_angle)) );
 
@@ -170,12 +164,20 @@ public class StringReader : StringCreator {
 
 				status = 1;
 				count_brackets ++;
+
+				if ( count_brackets > 1 ) last_coords.Insert( 	count_brackets-1,  
+				                                             new Vector3(getLastCoordX(),
+				            getLastCoordY(),
+				            0) );
 			} else if (axiom.Substring(str_pos, 1) == "]") {
 				status = 2;
 				count_brackets --;
 
 				swap_angle = last_angle[count_brackets];
 				last_angle.RemoveAt(count_brackets);
+
+				setCoords( (last_coords[count_brackets]).x, 
+				          (last_coords[count_brackets]).y );
 			} else if (axiom.Substring(str_pos, 1) == "+") {
 				swap_angle += this.angle;
 			} else if (axiom.Substring(str_pos, 1) == "-") {
@@ -183,7 +185,7 @@ public class StringReader : StringCreator {
 			}
 		}
 
-		/*
+
 		if (getLastCoordX() > max_coords.x)
 			max_coords.x = getLastCoordX();
 		else if (getLastCoordY() > max_coords.y)
@@ -193,7 +195,7 @@ public class StringReader : StringCreator {
 			min_coords.x = getLastCoordX();
 		else if (getLastCoordY() < min_coords.y)
 			min_coords.y = getLastCoordY();
-		*/
+
 	}
 
 	/// <summary>

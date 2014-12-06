@@ -55,9 +55,9 @@ public class Lindenmayer : MonoBehaviour
 		interaction = 3;
 		alphabet = "F";
 		rule = "F+F-F-F+F";
-		axiom = "-F";
-		angle = 45.0f;
-		unit_size = 0.1f;
+		axiom = "F";
+		angle = 90.0f;
+		unit_size = 1f;
 		toggleSaveFile = false;
 
 		camera_position = Camera.main.transform.position;
@@ -116,7 +116,6 @@ public class Lindenmayer : MonoBehaviour
 				record_number = (int) record_slider.value;
 				LoadFile(record_number);
 			}
-			Debug.Log((int) record_slider.value);
 		}
 
 		temp = GameObject.Find("InputField Rule");
@@ -155,21 +154,10 @@ public class Lindenmayer : MonoBehaviour
 					Camera.main.orthographicSize += 0.1f;
 			}
 
-			if ( Input.GetKey(KeyCode.R) ) {			// +
-				BiggerRecord();
-				LoadFile(record_number);
-				DisableRendererWithDelay();
-			}
-			
-			if ( Input.GetKey(KeyCode.T) ) {		// -
-				SmallerRecord();
-				LoadFile(record_number);
-				DisableRendererWithDelay();
-			}
-
 			UpdateCamera(camera_position.x,camera_position.y);
 		}
 
+		// associate a hotkey to a different registry of the txt file
 		if ( Input.GetKeyDown(KeyCode.Keypad1) || Input.GetKeyDown(KeyCode.Alpha1) ) LoadFile(0);
 		if ( Input.GetKeyDown(KeyCode.Keypad2) || Input.GetKeyDown(KeyCode.Alpha2) ) LoadFile(1);
 		if ( Input.GetKeyDown(KeyCode.Keypad3) || Input.GetKeyDown(KeyCode.Alpha3) ) LoadFile(2);
@@ -230,7 +218,6 @@ public class Lindenmayer : MonoBehaviour
 		myStringRead = new StringReader(angle, unit_size);
 		myStringRead.Read(myString.Start());
 		UpdateCamera(myStringRead.getMinCoordsX(),myStringRead.getMinCoordsY());
-		//myStringRead.printCoords();
 	}
 
 
@@ -241,20 +228,17 @@ public class Lindenmayer : MonoBehaviour
 		string tmp_full_axiom = myString.getFullString();
 		string tmp_alphabet = "";
 		string tmp_rule = "";
-		//Debug.Log ("HERE "+tmp_full_axiom);
 
 		for (int str_pos=0; str_pos < tmp_full_axiom.Length; str_pos++){
 			string single_symbol = tmp_full_axiom.Substring(str_pos, 1);
 			string value_retrieved = myString.getDicValue(single_symbol);
 
-			//Debug.Log ("R: "+single_symbol);
 			if ( (single_symbol == "+"  ||
 			      single_symbol == "-"  ||
 			      single_symbol == "["  ||
 			      single_symbol == "]") ) {
 			} else {
 			    if (IsNewValue(tmp_alphabet, single_symbol)) {
-					//Debug.Log ("in");
 					tmp_alphabet += single_symbol + ", ";
 					tmp_rule += single_symbol + "->" + value_retrieved + "; ";
 				}

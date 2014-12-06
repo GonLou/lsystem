@@ -50,7 +50,7 @@ public class StringCreator {
 		}
 
 		// separates the rules
-		if (rule.Substring(1, 1) == "-") {
+		if (rule.Substring(2, 1) == ">") {
 			int count_rules = 0;
 			rule = rule.Replace(" ", "");
 			rule = rule.Replace("->", "");
@@ -82,26 +82,50 @@ public class StringCreator {
 	~StringCreator() {
 	}
 
+	/// <summary>
+	/// Set the full string
+	/// </summary>
+	/// <param name="full_string">Full_string.</param>
 	public void setFullString(string full_string) {
 		this.full_string = full_string;
 	}
 
+	/// <summary>
+	/// Sets the angle.
+	/// </summary>
+	/// <param name="angle">Angle.</param>
 	public void setAngle(float angle) {
 		this.angle = angle;
 	}
 
+	/// <summary>
+	/// Set the unit size
+	/// </summary>
+	/// <param name="unit_size">Unit_size.</param>
 	public void setUnitSize(float unit_size) {
 		this.unit_size = unit_size;
 	}
 
+	/// <summary>
+	/// Returns the full axiom produced
+	/// </summary>
+	/// <returns>The full string.</returns>
 	public string getFullString() {
 		return this.full_string;
 	}
 
+	/// <summary>
+	/// Returns the angle
+	/// </summary>
+	/// <returns>The angle.</returns>
 	public float getAngle() {
 		return this.angle;
 	}
 
+	/// <summary>
+	///  Returns the unit size
+	/// </summary>
+	/// <returns>The unit size.</returns>
 	public float getUnitSize() {
 		return this.unit_size;
 	}

@@ -1,4 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
 /// 
 /// author:
 /// Goncalo Lourenco
@@ -37,62 +37,124 @@ public class StringReader : StringCreator {
 	~StringReader() {
 	}
 
+	/// <summary>
+	/// Sets the coords.
+	/// </summary>
+	/// <param name="x">The x coordinate.</param>
+	/// <param name="y">The y coordinate.</param>
 	private void setCoords(float x, float y) {
 		this.coords.Add(new Vector3(x, y, 0));
 	}
 
+	/// <summary>
+	/// Sets the coords add.
+	/// </summary>
+	/// <param name="x">The x coordinate.</param>
+	/// <param name="y">The y coordinate.</param>
 	private void setCoordsAdd(float x, float y) {
 		this.coords.Add(new Vector3(this.coords[this.coords.Count-1].x + x, this.coords[this.coords.Count-1].y + y, 0));
 	}
 
+	/// <summary>
+	/// Sets the angle.
+	/// </summary>
+	/// <param name="angle">Angle.</param>
 	public void setAngle(float angle) {
 		this.angle = angle;
 	}
 
+	/// <summary>
+	/// Sets the length.
+	/// </summary>
+	/// <param name="length">Length.</param>
 	public void setLength(float length) {
 		this.length = length;
 	}
 
+	/// <summary>
+	/// Returns the angle
+	/// </summary>
+	/// <returns>The angle.</returns>
 	public float getAngle() {
 		return this.angle;
 	}
-	
+
+	/// <summary>
+	/// Gets the length.
+	/// </summary>
+	/// <returns>The length.</returns>
 	public float getLength() {
 		return this.length;
 	}
 
+	/// <summary>
+	/// Gets the coords count.
+	/// </summary>
+	/// <returns>The coords count.</returns>
 	public int getCoordsCount() {
 		return this.coords.Count;
 	}
 
+	/// <summary>
+	/// Return the min X coordinate for screen calculation
+	/// </summary>
+	/// <returns>The minimum coords x.</returns>
 	public float getMinCoordsX() {
 		return this.min_coords.x;
 	}
 
+	/// <summary>
+	/// Return the max Y coordinate for screen calculation
+	/// </summary>
+	/// <returns>The minimum coords y.</returns>
 	public float getMinCoordsY() {
 		return this.min_coords.y;
 	}
 
+	/// <summary>
+	/// Return the max X coordinate for screen calculation
+	/// </summary>
+	/// <returns>The max coords x.</returns>
 	public float getMaxCoordsX() {
 		return this.max_coords.x;
 	}
 
+	/// <summary>
+	/// Return the max Y coordinate for screen calculation
+	/// </summary>
+	/// <returns>The max coords y.</returns>
 	public float getMaxCoordsY() {
 		return this.max_coords.y;
 	}
 
+	/// <summary>
+	/// Returns a coordinate by the use of an index
+	/// </summary>
+	/// <returns>The coords.</returns>
+	/// <param name="index">Index.</param>
 	public Vector3 getCoords(int index) {
 		return this.coords[index];
 	}
-	
+
+	/// <summary>
+	/// Returns the last Y coordinate
+	/// </summary>
+	/// <returns>The last coordinate x.</returns>
 	private float getLastCoordX() {
 		return this.coords[getCoordsCount()-1].x;
 	}
 
+	/// <summary>
+	/// Returns the last Y coordinate
+	/// </summary>
+	/// <returns>The last coordinate y.</returns>
 	private float getLastCoordY() {
 		return this.coords[getCoordsCount()-1].y;
 	}
 
+	/// <summary>
+	/// Print the list of all coordenates
+	/// </summary>
 	public void printCoords() {
 		foreach (Vector3 aPart in this.coords)
 		{

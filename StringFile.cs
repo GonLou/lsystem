@@ -12,6 +12,7 @@
  
 using UnityEngine;
 using System.Collections;
+using System.IO;
 
 public class StringFile {
 
@@ -60,7 +61,7 @@ public class StringFile {
 									"angle:", angle.ToString(),
 									"unit size:", unit_size.ToString(),
 								""};
-			System.IO.File.WriteAllLines(@"StringFile.txt", allLines);
+			//System.IO.File.WriteAllLines(@"StringFile.txt", allLines);
 		}
 		else { // append to the end of the file
 			using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"StringFile.txt", true)) {

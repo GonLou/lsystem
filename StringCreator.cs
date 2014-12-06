@@ -50,17 +50,21 @@ public class StringCreator {
 		}
 
 		// separates the rules
-		int count_rules = 0;
-		rule = rule.Replace(" ", "");
-		rule = rule.Replace("->", "");
-		for (int str_pos=1; str_pos < rule.Length; str_pos++) {
-			if (rule.Substring(str_pos, 1) == ";") {
-				str_pos++;
-				count_rules++;
-			} else {
-				rule_func[count_rules] = rule_func[count_rules] + rule.Substring(str_pos, 1);
+		if (rule.Substring(1, 1) == "-") {
+			int count_rules = 0;
+			rule = rule.Replace(" ", "");
+			rule = rule.Replace("->", "");
+			for (int str_pos=1; str_pos < rule.Length; str_pos++) {
+				if (rule.Substring(str_pos, 1) == ";") {
+					str_pos++;
+					count_rules++;
+				} else {
+					rule_func[count_rules] = rule_func[count_rules] + rule.Substring(str_pos, 1);
+				}
 			}
 		}
+		else
+			rule_func[0] = rule;
 
 		// adds keys and rules to the dictionary
 		for (int attr = 0; attr < 10; attr++) 
@@ -135,7 +139,7 @@ public class StringCreator {
 		};
 
 		setFullString(final_string);
-		Debug.Log ( final_string);
+		//Debug.Log ( final_string);
 
 		return final_string;
 	}

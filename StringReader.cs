@@ -174,7 +174,7 @@ public class StringReader : StringCreator {
 		float swap_angle = 90.0f;
 		List<Vector3> last_coords = new List<Vector3>();
 		List<float> last_angle = new List<float>();
-		int status = 0; // 0 - is no brackets | 1 - opened a bracket | 2 - closed a bracket
+		int status = 0; // 0 - is no brackets | 1 - opened a bracket 
 		int count_brackets = 0;
 		
 		setCoords( 0, 0 );
